@@ -46,3 +46,19 @@ Page unique : **Churn Overview** (layout type dashboard)
 4. Faible **Total_Trans_Amt** → signal de départ
 
 Ces points doivent **correspondre** au notebook EDA et au dashboard Streamlit (comparaison DA vs ML).
+
+---
+
+## Page 2 — ML Predictions
+
+| Visuel | Configuration |
+|--------|----------------|
+| Carte | `Model Accuracy` |
+| Carte | `High Risk Customers` |
+| Histogram | `ChurnProbability` — axis bucket |
+| Bar chart | `RiskLevel` × COUNT — stack by `PredictedChurn` |
+| Matrix | Rows `IsChurn`, Columns `PredictedChurn`, Values count |
+| Bar chart | `ML_Cluster` × average `ChurnProbability` |
+| Table | `ML_Cluster`, `Churn Rate`, `Avg ML Churn Probability` |
+
+Compare **ML_Cluster** avec segments métier (`Card_Category`) — critère BeCode clustering.

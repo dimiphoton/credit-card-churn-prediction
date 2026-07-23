@@ -32,7 +32,18 @@ Mesures principales :
 
 - `Churn Rate` — taux de churn global
 - `Total Customers` — nombre de clients
-- `Churned Customers` — clients partis
+- `Model Accuracy` — accord prédictions ML vs réalité
+- `High Risk Customers` — clients `RiskLevel = high`
+
+## Étape 3b — Colonnes ML (déjà dans le CSV)
+
+Pas besoin de ré-entraîner dans Power BI. Le CSV contient :
+
+- `ChurnProbability`, `PredictedChurn`, `RiskLevel`
+- `ML_Cluster` (KMeans)
+- `PredictionMatch` (Correct / Incorrect)
+
+Voir visuels ML dans [`VISUALS.md`](VISUALS.md) page **ML Predictions**.
 
 ## Étape 4 — Créer les visuels
 
@@ -58,13 +69,13 @@ Suis le plan dans [`VISUALS.md`](VISUALS.md). Minimum recommandé :
 3. Sur https://app.powerbi.com → ouvre le rapport → **Fichier** → **Intégrer le rapport** → **Site web ou portail**
 4. Copie l’URL ou le code `<iframe>` et ajoute-le dans le README principal
 
-## Comparaison Streamlit vs Power BI
+## Comparaison Streamlit vs Power BI vs Tableau
 
-| | Streamlit | Power BI |
-|---|-----------|----------|
-| **Code** | Python | Clic + DAX (no code) |
-| **Déploiement** | Render (déjà live) | powerbi.com |
-| **Public** | Marketing / DS | Analystes / Business |
-| **Interactivité** | Formulaire prédiction ML | Filtres BI, drill-down |
+| | Streamlit | Power BI | Tableau |
+|---|-----------|----------|---------|
+| **ML scores** | ✅ live | ✅ CSV export | ✅ CSV export |
+| **Clustering** | ✅ | ✅ `ML_Cluster` | ✅ `ML_Cluster` |
+| **Code** | Python | DAX + clic | Calculs + clic |
+| **Déploiement** | Render | powerbi.com | Tableau Public |
 
-Les deux utilisent les **mêmes données** — tu peux comparer les insights côte à côte.
+Détails : [`bi/COMPARISON.md`](../bi/COMPARISON.md) · Tableau : [`tableau/README.md`](../tableau/README.md)

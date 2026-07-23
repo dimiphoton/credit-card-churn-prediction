@@ -23,6 +23,20 @@ Churn Rate % = FORMAT([Churn Rate], "0.0%")
 Avg Credit Limit = AVERAGE('bank_churn_powerbi'[Credit_Limit])
 
 Avg Transactions = AVERAGE('bank_churn_powerbi'[Total_Trans_Amt])
+
+High Risk Customers = CALCULATE(
+    COUNTROWS('bank_churn_powerbi'),
+    'bank_churn_powerbi'[RiskLevel] = "high"
+)
+
+Model Accuracy =
+DIVIDE(
+    CALCULATE(COUNTROWS('bank_churn_powerbi'), 'bank_churn_powerbi'[PredictionMatch] = "Correct"),
+    COUNTROWS('bank_churn_powerbi'),
+    0
+)
+
+Avg ML Churn Probability = AVERAGE('bank_churn_powerbi'[ChurnProbability])
 ```
 
 ## Colonnes calculées (optionnel)
