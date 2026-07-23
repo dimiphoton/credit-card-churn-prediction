@@ -15,6 +15,11 @@ DB_PATH = PROCESSED_DATA_DIR / "churn.db"
 MODELS_DIR = PROJECT_ROOT / "models"
 CLASSIFIER_MODEL_PATH = MODELS_DIR / "classifier.pkl"
 CLUSTERING_MODEL_PATH = MODELS_DIR / "clustering.pkl"
+ENCODERS_PATH = MODELS_DIR / "encoders.pkl"
+FEATURE_COLUMNS_PATH = MODELS_DIR / "feature_columns.json"
+METRICS_PATH = MODELS_DIR / "metrics.json"
+CLUSTER_PROFILES_PATH = MODELS_DIR / "cluster_profiles.json"
+SCALER_PATH = MODELS_DIR / "scaler.pkl"
 
 # Colonnes métier
 TARGET_COLUMN = "Attrition_Flag"
