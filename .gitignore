@@ -36,6 +36,10 @@ logs/
 *.pkl
 *.joblib
 
+# Generated database
+data/processed/*.db
+data/processed/*.sqlite
+
 # IDE / OS
 .vscode/
 .idea/
