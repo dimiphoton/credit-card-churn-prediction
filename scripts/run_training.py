@@ -1,6 +1,12 @@
 """Script CLI — exécute ingestion + entraînement ML."""
 
 import logging
+import sys
+from pathlib import Path
+
+# Permet d'importer churn sans PYTHONPATH (Render build, CI, etc.)
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 from churn.clustering import train_clustering
 from churn.ingest import ingest_csv_to_db, read_customers_from_db

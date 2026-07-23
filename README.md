@@ -12,6 +12,15 @@ Marketing teams get three things out of the box:
 
 Built as a BeCode consolidation project (Data Engineer + ML Engineer + Data Analyst).
 
+**Live web apps (Render)** — deploy once via Blueprint (see [Deploy on Render](#deploy-on-render)):
+
+| App | URL (after deploy) |
+|-----|--------------------|
+| API (FastAPI) | `https://churn-api.onrender.com` |
+| Dashboard (Streamlit) | `https://churn-dashboard.onrender.com` |
+
+> URLs above are the default Render naming pattern. Replace with your actual URLs once deployed.
+
 ---
 
 ## Results at a glance
@@ -202,14 +211,45 @@ pytest
 
 ### Deploy on Render
 
-Linked GitHub account: `dimiphoton`. Blueprint file: [`render.yaml`](render.yaml)
+The web apps are **configured but not auto-deployed** — you need to trigger Render once from your dashboard.
 
-1. Render Dashboard → **New Blueprint** → select this repo
-2. Two services are created:
-   - `churn-api` — FastAPI
-   - `churn-dashboard` — Streamlit
+**What gets deployed**
 
-Env var: `PYTHONPATH=src` — training runs automatically at build time.
+| Service | App | URL path |
+|---------|-----|----------|
+| `churn-api` | FastAPI REST API | `/docs`, `/predict`, `/health` |
+| `churn-dashboard` | Streamlit dashboard | `/` (KPIs, segments, prediction form) |
+
+**Steps (5 min)**
+
+1. Go to [Render Dashboard](https://dashboard.render.com)
+2. Click **New +** → **Blueprint**
+3. Connect repo: `dimiphoton/credit-card-churn-prediction`
+4. Render reads [`render.yaml`](render.yaml) and creates 2 web services
+5. Click **Apply** — wait for build (~3–5 min per service)
+   - Build runs `pip install` + `run_training.py` (trains models in the cloud)
+6. Copy your live URLs from the Render dashboard
+
+**Verify deployment**
+
+```bash
+# API health
+curl https://churn-api.onrender.com/health
+
+# Swagger UI (browser)
+https://churn-api.onrender.com/docs
+
+# Dashboard (browser)
+https://churn-dashboard.onrender.com
+```
+
+**Free tier notes**
+
+- Services spin down after ~15 min idle → first request may take 30–60 s (cold start)
+- 2 web services = 2 free instances (within Render free limits)
+- Models are trained at **build time** (not stored in Git — `models/` is gitignored)
+
+**Config files:** [`render.yaml`](render.yaml) · [`runtime.txt`](runtime.txt) · [`Dockerfile`](Dockerfile) (alternative via Docker)
 
 ### Project structure
 
