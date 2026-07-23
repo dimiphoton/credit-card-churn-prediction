@@ -20,6 +20,7 @@ Built as a BeCode consolidation project (Data Engineer + ML Engineer + Data Anal
 |-----|-----|
 | Dashboard (Streamlit) | [churn-dashboard-wrtu.onrender.com](https://churn-dashboard-wrtu.onrender.com/) |
 | Dashboard (Power BI) | _Create with [powerbi/README.md](powerbi/README.md) → publish → paste URL here_ |
+| Dashboard (Tableau) | _Create with [tableau/README.md](tableau/README.md) → Tableau Public → paste URL here_ |
 | API (FastAPI) | _Add your Render API URL here when deployed_ |
 
 ---
@@ -88,17 +89,28 @@ Attrited Customer  █████████                                  
 | Customer Segments | Cluster table + churn-rate bar chart per segment |
 | Prediction | Live churn probability + risk level (low / medium / high) |
 
-**Power BI dashboard** ([`powerbi/`](powerbi/))
+**Power BI & Tableau** ([`powerbi/`](powerbi/) · [`tableau/`](tableau/) · [`bi/COMPARISON.md`](bi/COMPARISON.md))
 
-- Import `powerbi/data/bank_churn_powerbi.csv` in **Power BI Desktop** (free, Windows)
-- Follow [`powerbi/README.md`](powerbi/README.md) + [`powerbi/VISUALS.md`](powerbi/VISUALS.md)
-- Copy DAX measures from [`powerbi/measures.dax`](powerbi/measures.dax)
-- Regenerate data: `python scripts/export_for_powerbi.py`
+Same **ML model scores** exported to CSV — not a separate analysis:
+
+```bash
+python scripts/run_training.py          # train models
+python scripts/export_for_powerbi.py    # export to powerbi/ + tableau/ data
+```
+
+| ML column in CSV | Meaning |
+|------------------|---------|
+| `ChurnProbability` | Random Forest score (0–1) |
+| `PredictedChurn` | Model prediction (threshold 0.5) |
+| `RiskLevel` | low / medium / high |
+| `ML_Cluster` | KMeans segment |
+| `PredictionMatch` | Correct vs actual `IsChurn` |
 
 | Tool | Best for |
 |------|----------|
-| Streamlit | Python devs, ML prediction form, quick deploy on Render |
-| Power BI | Business dashboards, DAX KPIs, Microsoft stack, stakeholder presentations |
+| Streamlit | Live ML prediction form + Render deploy |
+| Power BI | Business KPIs + ML charts (DAX) |
+| Tableau | BeCode DA requirement — clustering comparison vs ML |
 
 ### Main findings
 
