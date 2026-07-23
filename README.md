@@ -19,6 +19,7 @@ Built as a BeCode consolidation project (Data Engineer + ML Engineer + Data Anal
 | App | URL |
 |-----|-----|
 | Dashboard (Streamlit) | [churn-dashboard-wrtu.onrender.com](https://churn-dashboard-wrtu.onrender.com/) |
+| Dashboard (Power BI) | _Create with [powerbi/README.md](powerbi/README.md) → publish → paste URL here_ |
 | API (FastAPI) | _Add your Render API URL here when deployed_ |
 
 ---
@@ -86,6 +87,18 @@ Attrited Customer  █████████                                  
 | ML Model | Recall / F1 / ROC-AUC metrics for the best classifier |
 | Customer Segments | Cluster table + churn-rate bar chart per segment |
 | Prediction | Live churn probability + risk level (low / medium / high) |
+
+**Power BI dashboard** ([`powerbi/`](powerbi/))
+
+- Import `powerbi/data/bank_churn_powerbi.csv` in **Power BI Desktop** (free, Windows)
+- Follow [`powerbi/README.md`](powerbi/README.md) + [`powerbi/VISUALS.md`](powerbi/VISUALS.md)
+- Copy DAX measures from [`powerbi/measures.dax`](powerbi/measures.dax)
+- Regenerate data: `python scripts/export_for_powerbi.py`
+
+| Tool | Best for |
+|------|----------|
+| Streamlit | Python devs, ML prediction form, quick deploy on Render |
+| Power BI | Business dashboards, DAX KPIs, Microsoft stack, stakeholder presentations |
 
 ### Main findings
 
@@ -265,6 +278,8 @@ credit-card-churn-prediction/
 ├── tests/
 ├── notebooks/01_eda.ipynb
 ├── scripts/run_training.py
+├── scripts/export_for_powerbi.py
+├── powerbi/                # Power BI guide + CSV for Desktop
 ├── data/raw_data/bank_data.csv
 ├── Dockerfile
 ├── docker-compose.yml

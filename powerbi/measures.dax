@@ -1,0 +1,37 @@
+# Mesures DAX — à créer dans Power BI Desktop
+
+Coller chaque mesure via : **Modélisation** → **Nouvelle mesure**
+
+```dax
+Total Customers = COUNTROWS('bank_churn_powerbi')
+
+Churned Customers = CALCULATE(
+    COUNTROWS('bank_churn_powerbi'),
+    'bank_churn_powerbi'[IsChurn] = 1
+)
+
+Active Customers = CALCULATE(
+    COUNTROWS('bank_churn_powerbi'),
+    'bank_churn_powerbi'[IsChurn] = 0
+)
+
+Churn Rate =
+DIVIDE([Churned Customers], [Total Customers], 0)
+
+Churn Rate % = FORMAT([Churn Rate], "0.0%")
+
+Avg Credit Limit = AVERAGE('bank_churn_powerbi'[Credit_Limit])
+
+Avg Transactions = AVERAGE('bank_churn_powerbi'[Total_Trans_Amt])
+```
+
+## Colonnes calculées (optionnel)
+
+```dax
+High Inactivity =
+IF('bank_churn_powerbi'[Months_Inactive_12_mon] >= 3, "High", "Normal")
+```
+
+## Note
+
+Si Power BI renomme la table à l'import, remplace `'bank_churn_powerbi'` par le nom affiché dans le volet **Données** (ex. `'bank_churn_powerbi'` ou nom sans extension).
