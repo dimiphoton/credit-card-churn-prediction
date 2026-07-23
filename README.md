@@ -1,5 +1,7 @@
 # Credit Card Churn Prediction
 
+[![Live Dashboard](https://img.shields.io/badge/Live_Demo-Streamlit-FF4B4B?style=for-the-badge)](https://churn-dashboard-wrtu.onrender.com/)
+
 ## What is this?
 
 A **customer retention toolkit** for a bank facing rising credit card churn (~16%).
@@ -12,14 +14,12 @@ Marketing teams get three things out of the box:
 
 Built as a BeCode consolidation project (Data Engineer + ML Engineer + Data Analyst).
 
-**Live web apps (Render)** — deploy once via Blueprint (see [Deploy on Render](#deploy-on-render)):
+**Live demo:** [https://churn-dashboard-wrtu.onrender.com/](https://churn-dashboard-wrtu.onrender.com/)
 
-| App | URL (after deploy) |
-|-----|--------------------|
-| API (FastAPI) | `https://churn-api.onrender.com` |
-| Dashboard (Streamlit) | `https://churn-dashboard.onrender.com` |
-
-> URLs above are the default Render naming pattern. Replace with your actual URLs once deployed.
+| App | URL |
+|-----|-----|
+| Dashboard (Streamlit) | [churn-dashboard-wrtu.onrender.com](https://churn-dashboard-wrtu.onrender.com/) |
+| API (FastAPI) | _Add your Render API URL here when deployed_ |
 
 ---
 
@@ -233,14 +233,11 @@ The web apps are **configured but not auto-deployed** — you need to trigger Re
 **Verify deployment**
 
 ```bash
-# API health
-curl https://churn-api.onrender.com/health
-
-# Swagger UI (browser)
-https://churn-api.onrender.com/docs
-
 # Dashboard (browser)
-https://churn-dashboard.onrender.com
+https://churn-dashboard-wrtu.onrender.com
+
+# API — replace with your Render API URL when available
+# curl https://YOUR-API-URL.onrender.com/health
 ```
 
 **Free tier notes**
