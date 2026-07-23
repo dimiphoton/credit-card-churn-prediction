@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: churn-api
+    runtime: python
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt && python scripts/run_training.py
+    startCommand: uvicorn app.api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHONPATH
+        value: src
+
+  - type: web
+    name: churn-dashboard
+    runtime: python
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt && python scripts/run_training.py
+    startCommand: streamlit run app/dashboard/app.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true
+    envVars:
+      - key: PYTHONPATH
+        value: src
