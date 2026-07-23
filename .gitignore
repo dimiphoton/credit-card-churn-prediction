@@ -31,7 +31,6 @@ env/
 
 # ML artifacts
 models/
-images/
 logs/
 *.pkl
 *.joblib

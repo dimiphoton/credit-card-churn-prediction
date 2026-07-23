@@ -32,6 +32,34 @@ Existing Customer  ████████████████████�
 Attrited Customer  █████████                                         16%
 ```
 
+### Screenshots
+
+**Dashboard KPIs**
+
+![Dashboard KPIs](docs/images/dashboard_kpis.png)
+
+**Churn overview**
+
+![Churn overview](docs/images/churn_overview.png)
+
+**Churn by card category**
+
+![Churn by card category](docs/images/churn_by_card.png)
+
+**Feature correlations**
+
+![Correlation heatmap](docs/images/correlation_heatmap.png)
+
+**Customer segments (KMeans)**
+
+![Cluster churn rates](docs/images/cluster_churn.png)
+
+**Model performance (Random Forest)**
+
+![Model metrics](docs/images/model_metrics.png)
+
+> Regenerate images: `python scripts/run_training.py` then `python scripts/generate_readme_images.py`
+
 ### What the charts show
 
 **EDA notebook** (`notebooks/01_eda.ipynb`)
@@ -55,7 +83,7 @@ Attrited Customer  █████████                                  
 - Churn is **imbalanced** (~16% positive class) → SMOTE applied during training
 - **Low activity** (inactive months, low transaction count) strongly correlates with churn
 - **Blue card** holders show higher churn rates — priority segment for retention campaigns
-- **Random Forest** typically wins on recall vs Logistic Regression (business priority: don't miss a leaver)
+- **Random Forest** wins on recall vs Logistic Regression (**0.87 recall** on test set)
 
 ---
 
