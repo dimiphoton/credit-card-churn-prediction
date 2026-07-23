@@ -32,5 +32,9 @@ DROP_COLUMNS = ["Unnamed: 0"]  # index CSV exporté par pandas
 CHURN_POSITIVE_LABEL = "Attrited Customer"
 CHURN_NEGATIVE_LABEL = "Existing Customer"
 
+# Base de données
+CUSTOMERS_TABLE = "customers"
+
 # Reproductibilité
 RANDOM_STATE = 42
+TEST_SIZE = 0.3
