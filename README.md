@@ -1,38 +1,83 @@
 # Credit Card Churn Prediction
 
-Projet BeCode — prédiction et segmentation du churn client pour une institution financière.
+## What is this?
 
-Pipeline data complet : **SQLite → EDA → preprocessing → ML → API FastAPI → dashboard Streamlit**, déployable sur **Render** via Docker.
+A **customer retention toolkit** for a bank facing rising credit card churn (~16%).
 
----
+Marketing teams get three things out of the box:
 
-## Description
+1. **Risk scoring** — flag clients likely to leave before they do
+2. **Customer segments** — group clients by behaviour for targeted campaigns
+3. **Live dashboard** — KPIs, model performance, and interactive predictions
 
-Une banque observe un taux de churn supérieur à **16 %** sur ses porteurs de cartes de crédit. L'équipe marketing a besoin d'outils pour :
-
-1. **Identifier** les clients à risque de résiliation
-2. **Segmenter** la base en groupes homogènes
-3. **Prioriser** les actions de rétention
-
-Ce dépôt implémente les trois rôles du brief BeCode (Data Engineer, ML Engineer, Data Analyst) dans un pipeline intégré.
-
-| Composant | Rôle | Technologie |
-|-----------|------|-------------|
-| Ingestion | Stockage structuré | SQLite + pandas |
-| EDA | Exploration & KPIs | Jupyter + notebook `01_eda.ipynb` |
-| Preprocessing | Nettoyage & encodage | `src/churn/cleaning.py`, `features.py` |
-| Classification | Prédiction churn | scikit-learn + SMOTE |
-| Clustering | Segments clients | KMeans (silhouette) |
-| API | Scoring temps réel | FastAPI |
-| Dashboard | KPIs & profils | Streamlit |
-
-Documents complémentaires : [`CRITERIA.md`](CRITERIA.md) · [`PROJECT_PLAN.md`](PROJECT_PLAN.md)
+Built as a BeCode consolidation project (Data Engineer + ML Engineer + Data Analyst).
 
 ---
 
-## Installation
+## Results at a glance
 
-**Prérequis** : Python 3.10+
+### Key metrics
+
+| KPI | Value |
+|-----|------:|
+| Total customers | 10,127 |
+| Churn rate | **16.1%** |
+| Existing customers | 8,500 |
+| Attrited customers | 1,627 |
+
+### Churn split
+
+```text
+Existing Customer  ████████████████████████████████████████████████  84%
+Attrited Customer  █████████                                         16%
+```
+
+### What the charts show
+
+**EDA notebook** (`notebooks/01_eda.ipynb`)
+
+- Churn rate breakdown (Existing vs Attrited)
+- Numeric feature distributions by churn status (age, credit limit, transactions…)
+- Churn rate by card category, income, education
+- Correlation heatmap — top signals: `Total_Trans_Amt`, `Total_Trans_Ct`, `Contacts_Count_12_mon`, `Months_Inactive_12_mon`
+
+**Streamlit dashboard** (`app/dashboard/app.py`)
+
+| Tab | Visual output |
+|-----|---------------|
+| Exploration | KPI cards, churn bar chart, churn-by-card-category chart |
+| ML Model | Recall / F1 / ROC-AUC metrics for the best classifier |
+| Customer Segments | Cluster table + churn-rate bar chart per segment |
+| Prediction | Live churn probability + risk level (low / medium / high) |
+
+### Main findings
+
+- Churn is **imbalanced** (~16% positive class) → SMOTE applied during training
+- **Low activity** (inactive months, low transaction count) strongly correlates with churn
+- **Blue card** holders show higher churn rates — priority segment for retention campaigns
+- **Random Forest** typically wins on recall vs Logistic Regression (business priority: don't miss a leaver)
+
+---
+
+## Technical documentation
+
+### Stack
+
+| Layer | Technology |
+|-------|------------|
+| Storage | SQLite |
+| EDA | Jupyter |
+| ML | scikit-learn + imbalanced-learn (SMOTE) |
+| Clustering | KMeans (silhouette score) |
+| API | FastAPI |
+| Dashboard | Streamlit |
+| Deploy | Docker + Render |
+
+See also [`CRITERIA.md`](CRITERIA.md) (BeCode brief) · [`PROJECT_PLAN.md`](PROJECT_PLAN.md) (technical plan)
+
+### Installation
+
+**Requirements:** Python 3.10+
 
 ```bash
 git clone https://github.com/dimiphoton/credit-card-churn-prediction.git
@@ -49,26 +94,17 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
----
+### Usage
 
-## Usage
-
-### Étape 1 — Entraîner le pipeline
-
-Importe le CSV en base SQLite, entraîne le classifieur et le clustering, sauvegarde les modèles dans `models/`.
+**1. Train the pipeline**
 
 ```bash
 python scripts/run_training.py
 ```
 
-**Artefacts générés :**
+Outputs: `data/processed/churn.db`, models in `models/`.
 
-- `data/processed/churn.db`
-- `models/classifier.pkl`
-- `models/clustering.pkl`
-- `models/metrics.json`
-
-### Étape 2 — API FastAPI
+**2. Start the API**
 
 ```bash
 # Windows
@@ -82,29 +118,21 @@ uvicorn app.api.main:app --reload --port 8000
 
 | Endpoint | Description |
 |----------|-------------|
-| `GET /health` | Santé de l'API |
-| `GET /ready` | Modèle chargé |
-| `GET /metrics` | Métriques ML (recall, F1, ROC-AUC) |
-| `POST /predict` | Prédiction churn |
-| `GET /docs` | Documentation Swagger |
+| `GET /health` | API health check |
+| `GET /ready` | Model loaded |
+| `GET /metrics` | ML metrics (recall, F1, ROC-AUC) |
+| `POST /predict` | Churn prediction |
+| `GET /docs` | Swagger UI |
 
-**Exemple de prédiction :**
-
-```bash
-curl -X POST http://localhost:8000/predict ^
-  -H "Content-Type: application/json" ^
-  -d "{\"Customer_Age\":45,\"Gender\":\"M\",\"Dependent_count\":3,\"Education_Level\":\"High School\",\"Marital_Status\":\"Married\",\"Income_Category\":\"$60K - $80K\",\"Card_Category\":\"Blue\",\"Months_on_book\":39,\"Total_Relationship_Count\":5,\"Months_Inactive_12_mon\":1,\"Contacts_Count_12_mon\":3,\"Credit_Limit\":12691,\"Total_Revolving_Bal\":777,\"Avg_Open_To_Buy\":11914,\"Total_Amt_Chng_Q4_Q1\":1.335,\"Total_Trans_Amt\":1144,\"Total_Trans_Ct\":42,\"Total_Ct_Chng_Q4_Q1\":1.625,\"Avg_Utilization_Ratio\":0.061}"
-```
-
-### Étape 3 — Dashboard Streamlit
+**3. Start the dashboard**
 
 ```bash
 streamlit run app/dashboard/app.py
 ```
 
-Ouvrir http://localhost:8501 — onglets : Exploration, Modèle ML, Segments clients, Prédiction.
+→ http://localhost:8501
 
-### Étape 4 — Docker
+**4. Docker**
 
 ```bash
 docker compose up --build
@@ -115,80 +143,61 @@ docker compose up --build
 | API | http://localhost:8000 |
 | Dashboard | http://localhost:8501 |
 
-### Étape 5 — Tests
+**5. Tests**
 
 ```bash
 pytest
 ```
 
-31 tests : ingestion, preprocessing, ML, API, pipeline complet.
+31 tests covering ingestion, preprocessing, ML, API, and full pipeline.
 
----
+### Model choices & limitations
 
-## Visuals
+**Classification**
 
-- **Notebook EDA** (`notebooks/01_eda.ipynb`) — taux de churn, distributions, corrélations
-- **Dashboard Streamlit** — KPIs, segments KMeans, formulaire de prédiction
-- **API `/metrics`** — comparaison Logistic Regression vs Random Forest
+- Target: `Attrition_Flag` (binary)
+- Models: Logistic Regression (baseline) + Random Forest
+- Imbalance handled with SMOTE on the training set
+- Best model selected by **recall** on the test set
 
----
+**Clustering**
 
-## Résultats & choix du modèle
+- KMeans on scaled features, optimal K via silhouette score (K = 2–8)
+- Output: cluster profiles (size, churn rate, avg age, avg transactions)
 
-### Classification
+**Limitations**
 
-- **Cible** : `Attrition_Flag` → binaire (churn = 1)
-- **Modèles testés** : Logistic Regression (baseline) + Random Forest
-- **Déséquilibre** : SMOTE sur le jeu d'entraînement
-- **Sélection** : meilleur **recall** sur le test set (priorité métier : ne pas rater un client qui part)
-- **Métriques suivies** : recall, F1, ROC-AUC
+- Static historical data — no macro-economic or competitor variables
+- Label encoding on categoricals (not one-hot)
+- High recall → more false positives (broader marketing outreach)
+- Periodic retraining recommended in production
 
-### Clustering
+### Deploy on Render
 
-- **Algorithme** : KMeans sur features normalisées
-- **K optimal** : score de silhouette (K de 2 à 8)
-- **Livrable** : profils par cluster (taille, churn rate, âge moyen, transactions)
+Linked GitHub account: `dimiphoton`. Blueprint file: [`render.yaml`](render.yaml)
 
-### Limitations
-
-- Données historiques statiques — pas de variables macro-économiques ni concurrence
-- Label encoding sur les catégorielles (pas de one-hot)
-- Recall élevé → davantage de faux positifs (campagnes marketing ciblées plus larges)
-- Réentraînement périodique recommandé en production
-
----
-
-## Déploiement Render
-
-Compte Render lié au GitHub `dimiphoton`. Fichier [`render.yaml`](render.yaml) :
-
-1. Render Dashboard → **New Blueprint**
-2. Sélectionner ce dépôt
-3. Deux services créés :
-   - `churn-api` — FastAPI (`uvicorn`)
+1. Render Dashboard → **New Blueprint** → select this repo
+2. Two services are created:
+   - `churn-api` — FastAPI
    - `churn-dashboard` — Streamlit
 
-Variable d'environnement : `PYTHONPATH=src`
+Env var: `PYTHONPATH=src` — training runs automatically at build time.
 
-Le build exécute `python scripts/run_training.py` avant le démarrage.
-
----
-
-## Structure du projet
+### Project structure
 
 ```text
 credit-card-churn-prediction/
-├── src/churn/              # Library métier
+├── src/churn/              # Core library
 │   ├── ingest.py           # CSV → SQLite
-│   ├── cleaning.py         # Nettoyage
-│   ├── features.py         # Encodage + split
+│   ├── cleaning.py
+│   ├── features.py
 │   ├── train.py            # Classification + SMOTE
 │   ├── clustering.py       # KMeans
-│   └── predict.py          # Inférence
+│   └── predict.py
 ├── app/
 │   ├── api/main.py         # FastAPI
 │   └── dashboard/app.py    # Streamlit
-├── tests/                  # pytest (31 tests)
+├── tests/
 ├── notebooks/01_eda.ipynb
 ├── scripts/run_training.py
 ├── data/raw_data/bank_data.csv
@@ -197,42 +206,16 @@ credit-card-churn-prediction/
 └── render.yaml
 ```
 
----
+### Git workflow
 
-## Workflow Git
-
-Développement par **feature branches** avec merge sur `main` à chaque étape :
+Feature branches merged into `main` step by step:
 
 `feature/01-scaffold` → `02-database` → `03-eda` → `04-preprocessing` → `05-ml-models` → `06-tests` → `07-fastapi-docker` → `08-streamlit` → `09-deploy-docs`
 
----
+### Contributors
 
-## Contributors
+- **Dimitri Marchand** ([@dimiphoton](https://github.com/dimiphoton)) — Data Engineering, ML, Dashboard, Deployment
 
-- **Dimitri Marchand** ([@dimiphoton](https://github.com/dimiphoton)) — Data Engineering, ML, Dashboard, Déploiement
+### Dataset
 
----
-
-## Timeline
-
-| Phase | Branche | Statut |
-|-------|---------|--------|
-| Reset baseline | main | ✅ |
-| Scaffold | feature/01-scaffold | ✅ |
-| SQLite | feature/02-database | ✅ |
-| EDA | feature/03-eda | ✅ |
-| Preprocessing | feature/04-preprocessing | ✅ |
-| ML | feature/05-ml-models | ✅ |
-| Tests | feature/06-tests | ✅ |
-| API + Docker | feature/07-fastapi-docker | ✅ |
-| Dashboard | feature/08-streamlit | ✅ |
-| Docs + Render | feature/09-deploy-docs | ✅ |
-
----
-
-## Personal situation
-
-Projet solo réalisé dans le cadre du challenge BeCode **Churn Prediction** (consolidation).
-Approche professionnelle : branches par étape, tests automatisés, déploiement Render.
-
-Dataset : [Credit Card Customers (Kaggle)](https://www.kaggle.com/sakshigoyal7/credit-card-customers)
+[Credit Card Customers (Kaggle)](https://www.kaggle.com/sakshigoyal7/credit-card-customers)
